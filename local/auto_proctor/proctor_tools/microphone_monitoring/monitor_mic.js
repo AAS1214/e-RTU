@@ -7,6 +7,36 @@ $(document).ready(function () {
     let filename;
     let mediaRecorder;
     let chunks = [];
+
+    // Check microphone permission
+    setTimeout(function() {
+        navigator.permissions.query({name: 'microphone'}).then(function(permissionStatus) {
+            console.log('microphone permission state is ', permissionStatus.state);
+
+            if (permissionStatus.state === 'denied') {
+                if (jsdata.strict_mode_activated == 1){
+                    console.log('microphone denied must redirect to review attempt quiz page');
+                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                }
+            }
+            permissionStatus.onchange = function() {
+                console.log('microphone permission state has changed to ', this.state);
+
+                // If microphone permission is denied, record in database.
+                if (this.state = 'denied'){
+                    evidence_name_type = 'microphone_permission_denied_during_quiz';
+                    sendActivityRecord();
+
+                    // Check if strict mode was activated
+                    // If strict mode was activated then forcefully exit quiz.
+                    if (jsdata.strict_mode_activated == 1){
+                        console.log('microphone denied must redirect to review attempt quiz page');
+                        window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                    }
+                }
+            };
+        });
+    }, 5000); // 5000 milliseconds = 5 seconds
   
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(function(stream) {
@@ -280,25 +310,4 @@ $(document).ready(function () {
 
         return { timestamp, milliseconds: now.getMilliseconds() };
     }
-
-    // Check microphone permission
-    navigator.permissions.query({name: 'microphone'}).then(function(permissionStatus) {
-        console.log('microphone permission state is ', permissionStatus.state);
-        permissionStatus.onchange = function() {
-            console.log('microphone permission state has changed to ', this.state);
-
-            // If microphone permission is denied, record in database.
-            if (this.state = 'denied'){
-                evidence_name_type = 'microphone_permission_denied_during_quiz';
-                sendActivityRecord();
-
-                // Check if strict mode was activated
-                // If strict mode was activated then forcefully exit quiz.
-                if (jsdata.strict_mode_activated == 1){
-                    console.log('microphone denied must redirect to review attempt quiz page');
-                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
-                }
-            }
-        };
-    });
 });

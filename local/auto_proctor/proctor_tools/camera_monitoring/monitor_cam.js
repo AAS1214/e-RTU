@@ -76,6 +76,7 @@ $(document).ready(function () {
                 console.log('camera permission state is ', permissionStatus.state);
                 if (permissionStatus.state === 'denied') {
                     if (jsdata.strict_mode_activated == 1) {
+                        sendActivityRecord('camera_permission_denied');
                         console.log('camera denied must redirect to review attempt quiz page');
                         window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
                     }

@@ -49,6 +49,8 @@ $cmid = $jsdata['cmid'];
 $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
+$strict_mode_activated = $jsdata['strict_mode_activated'];
+
 ?>
 
 <!DOCTYPE html>
@@ -237,6 +239,9 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
     let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
     let monitor_tab_switching_activated = <?php echo $monitor_tab_switching_activated; ?>;
     let device_type = device.type;
+    let wwwroot = <?php echo json_encode($wwwroot); ?>;
+    let cmid = <?php echo json_encode($cmid); ?>;
+    let strict_mode_activated = <?php echo json_encode($strict_mode_activated); ?>;
 
     var popupModal = document.getElementById("popup-modal");
     var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
@@ -368,11 +373,15 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 
         // Get the selected camera
         var selectedRadio = document.querySelector('input[name="camera"]:checked');
-        
         // If none are selected then, alert the user
         if (!selectedRadio) {
+            console.log('mode', strict_mode_activated);
             alert("Please select a camera");
-            return;
+        
+            if (strict_mode_activated == 1){
+                console.log('strict activated');
+                window.location.href = wwwroot + '/mod/quiz/view.php?id=' + cmid;
+            }
         }
 
         var deviceId = selectedRadio.value;
