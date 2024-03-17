@@ -72,8 +72,8 @@ global $DB, $USER, $CFG;
                 //echo $instance_id . "</br>";
                 if ($_GET['course_id'] == $instance_id[0]){
                     //break;
-                    echo "is teacher";
-                    echo "</br>";
+                    // echo "is teacher";
+                    // echo "</br>";
                     $isteacher = true;
                     break;
                 }
@@ -92,10 +92,10 @@ global $DB, $USER, $CFG;
         $quiz_id = $_GET['quiz_id'];
         $quiz_attempt = $_GET['quiz_attempt'];
 
-        echo $course_id . "</br>";
-        echo $user_id . "</br>";
-        echo $quiz_id . "</br>";
-        echo $quiz_attempt . "</br>";
+        // echo $course_id . "</br>";
+        // echo $user_id . "</br>";
+        // echo $quiz_id . "</br>";
+        // echo $quiz_attempt . "</br>";
 
         // =========== Select user's fullname
             $sql = "SELECT *
@@ -158,8 +158,8 @@ global $DB, $USER, $CFG;
                         break;
                 }
 
-                echo $device_type . '</br>';
-                echo $multiple_monitor . '</br>';
+                // echo $device_type . '</br>';
+                // echo $multiple_monitor . '</br>';
             }
         // =========== Select activated features quiz
             $sql = "SELECT *
@@ -176,7 +176,7 @@ global $DB, $USER, $CFG;
                 $monitor_tab_switching = $feature->monitor_tab_switching;
             }
 
-            print_r($activated_features);
+            //print_r($activated_features);
 
         // Retrieve all records from AP Table
             $AP_tb = 'auto_proctor_quiz_tb';
@@ -218,7 +218,7 @@ global $DB, $USER, $CFG;
                 ";
                 $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
                 $quiz_session_recordings = $DB->get_records_sql($sql, $params);
-                print_r($quiz_session_recordings);
+                //print_r($quiz_session_recordings);
 
     }
 
@@ -881,22 +881,45 @@ global $DB, $USER, $CFG;
                                                     // }
 
                                                     
-                                                    
+                                                    $file_path = $directory . urlencode($url);
+                                                    $file_handle = @fopen($file_path, 'r');
                                                     // IMAGE TYPE
                                                     if ($extension === "png"){
-                                                            echo '                  
-                                                                <tr class="border-b">
-                                                                    <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
-                                                                        '. $activity_name .'
-                                                                    </th>
-                                                                    <td class="px-4 py-10">
-                                                                        '. $formatted_activity_time .'
-                                                                        <br>
-                                                                        '. $activity_timestamp .'
-                                                                    </td>
-                                                                    <td class="px-24 py-10">
-                                                                        <svg width="50px" height="50px" viewBox="0 0 24 24">
-                                                                        <img class="popup-image" width="160px" height="160px" src="'.$directory . urlencode($evidence).'" alt="Image">
+                                                            if ($file_handle !== false) {
+                                                                fclose($file_handle);
+                                                                echo '                  
+                                                                    <tr class="border-b">
+                                                                        <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
+                                                                            '. $activity_name .'
+                                                                        </th>
+                                                                        <td class="px-4 py-10">
+                                                                            '. $formatted_activity_time .'
+                                                                            <br>
+                                                                            '. $activity_timestamp .'
+                                                                        </td>
+                                                                        <td class="px-24 py-10">
+                                                                            <svg width="50px" height="50px" viewBox="0 0 24 24">
+                                                                            <img class="popup-image" width="160px" height="160px" src="'.$directory . urlencode($evidence).'" alt="Image">
+                                                                            </svg>
+                                                                        </td>
+                                                                    </tr>
+                                                                ';
+                                                            }
+                                                            else{
+                                                                echo '                  
+                                                                    <tr class="border-b">
+                                                                        <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
+                                                                            '. $activity_name .'
+                                                                        </th>
+                                                                        <td class="px-4 py-10">
+                                                                            '. $formatted_activity_time .'
+                                                                        </td>
+                                                                        <td class="px-24 py-10">
+                                                                        <svg width="50px" height="50px" viewBox="0 0 24 24"
+                                                                            xmlns="http://www.w3.org/2000/svg">
+                                                                            <path
+                                                                                d="M21 5h-8.8L11 3H4L2.8 5H1v16h20l2.902-12H21zM2 6h1.366l1.2-2h5.868l1.2 2H20v3h-5.6l-2 2H4.35L2 18.015zm20.632 4l-2.42 10H2.39l2.68-8h7.744l2-2z" />
+                                                                            <path fill="none" d="M0 0h24v24H0z" />
                                                                         </svg>
                                                                         <span class>
                                                                             <h6 class="text-xs">The
@@ -909,31 +932,66 @@ global $DB, $USER, $CFG;
                                                                             </a>
                                                                         </span>
 
-                                                                    </td>
-                                                                </tr>
-                                                            ';
+                                                                        </td>
+                                                                    </tr>
+                                                                ';
+                                                            }
                                                         
                                                     }
                                                     else if ($extension === "wav"){
-                                                        echo '
-                                                            <tr class="bg-gray-300">
-                                                                <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
-                                                                    '. $activity_name .'
-                                                                </th>
-                                                                <td class="px-4 py-10">
-                                                                    '. $formatted_activity_time .'
-                                                                </td>
-                                                                <td class="px-4 py-10">
-                                                                    <!--AUDIO HERE-->
-                                                                    <audio controls>
-                                                                        <source src = "'. $directory . urlencode($evidence) .'" type="audio/wav">
-                                                                        Your browser does not
-                                                                        support the audio
-                                                                        element.
-                                                                    </audio>
-                                                                </td>
-                                                            </tr>
-                                                        ';
+                                                        if ($file_handle !== false) {
+                                                            fclose($file_handle);
+                                                            echo '
+                                                                <tr class="bg-gray-300">
+                                                                    <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
+                                                                        '. $activity_name .'
+                                                                    </th>
+                                                                    <td class="px-4 py-10">
+                                                                        '. $formatted_activity_time .'
+                                                                    </td>
+                                                                    <td class="px-4 py-10">
+                                                                        <!--AUDIO HERE-->
+                                                                        <audio controls>
+                                                                            <source src = "'. $directory . urlencode($evidence) .'" type="audio/wav">
+                                                                            Your browser does not
+                                                                            support the audio
+                                                                            element.
+                                                                        </audio>
+                                                                    </td>
+                                                                </tr>
+                                                            ';
+                                                        }
+                                                        else{
+                                                            echo '                  
+                                                                <tr class="border-b">
+                                                                    <th scope="row" class="px-4 py-10 font-medium whitespace-nowrap">
+                                                                        '. $activity_name .'
+                                                                    </th>
+                                                                    <td class="px-4 py-10">
+                                                                        '. $formatted_activity_time .'
+                                                                    </td>
+                                                                    <td class="px-24 py-10">
+                                                                    <svg width="50px" height="50px" viewBox="0 0 24 24"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <path
+                                                                            d="M21 5h-8.8L11 3H4L2.8 5H1v16h20l2.902-12H21zM2 6h1.366l1.2-2h5.868l1.2 2H20v3h-5.6l-2 2H4.35L2 18.015zm20.632 4l-2.42 10H2.39l2.68-8h7.744l2-2z" />
+                                                                        <path fill="none" d="M0 0h24v24H0z" />
+                                                                    </svg>
+                                                                    <span class>
+                                                                        <h6 class="text-xs">The
+                                                                            evidence has not
+                                                                            been captured.</h6>
+                                                                    </span>
+                                                                    <span>
+                                                                        <a href class="text-xs text-blue-700">
+                                                                            Learn Why?
+                                                                        </a>
+                                                                    </span>
+
+                                                                    </td>
+                                                                </tr>
+                                                            ';
+                                                        }
                                                     }
                                                     else{
                                                         echo '                  

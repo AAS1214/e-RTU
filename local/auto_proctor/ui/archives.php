@@ -93,7 +93,7 @@ if (!is_siteadmin($user_id)) {
 
         if ($course_category[0] === $bsit_id[0]) {
             //$course_ids[] = $course_id;
-            echo "an it: " . $course_id . '</br>';
+            // echo "an it: " . $course_id . '</br>';
             $course_ids[] = $course_id;
         }
     }

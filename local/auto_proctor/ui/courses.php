@@ -72,8 +72,8 @@ if (!is_siteadmin($user_id)) {
         //echo $instance_id . "</br>";
         if ($_GET['course_id'] == $instance_id[0]) {
             //break;
-            echo "is teacher";
-            echo "</br>";
+            // echo "is teacher";
+            // echo "</br>";
             $isteacher = true;
             break;
         }
