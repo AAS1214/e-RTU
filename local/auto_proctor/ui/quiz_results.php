@@ -280,6 +280,16 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
     // echo "</br>";
 
 
+    // ========== SELECT ALL QUIZ ACTIVITY REPORT
+        $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE quizid = :quiz_id;
+                ";
+
+        $params = array('quiz_id' => $quiz_id);
+
+        $all_quiz_reports = $DB->get_records_sql($sql, $params);
+        //print_r($all_quiz_reports);
 }
 
 ?>
