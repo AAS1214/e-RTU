@@ -218,7 +218,9 @@ global $DB, $USER, $CFG;
                 ";
                 $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
                 $quiz_session_recordings = $DB->get_records_sql($sql, $params);
-                //print_r($quiz_session_recordings);
+                print_r($quiz_session_recordings);
+                $count_record = count($quiz_session_recordings);
+                echo $count_record;
 
     }
 
@@ -863,7 +865,7 @@ global $DB, $USER, $CFG;
                                                     $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
 
                                                     // Output the file extension
-                                                    echo $extension;
+                                                    //echo $extension;
 
                                                     if ($extension === "png" || $extension === "webm"){
                                                         if ($activity_type >= 1 && $activity_type <= 5){
@@ -876,9 +878,9 @@ global $DB, $USER, $CFG;
                                                     else if ($extension === "wav"){
                                                         $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/microphone_capture_evidence/';
                                                     }
-                                                    // else{
-                                                    //     $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/microphone_capture_evidence/';
-                                                    // }
+                                                    else{
+                                                        $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/microphone_capture_evidence/';
+                                                    }
 
                                                     
                                                     $file_path = $directory . urlencode($url);
