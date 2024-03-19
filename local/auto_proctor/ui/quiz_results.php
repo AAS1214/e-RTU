@@ -281,15 +281,15 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
 
 
     // ========== SELECT ALL QUIZ ACTIVITY REPORT
-        $sql = "SELECT *
+    $sql = "SELECT *
                     FROM {auto_proctor_activity_report_tb}
                     WHERE quizid = :quiz_id;
                 ";
 
-        $params = array('quiz_id' => $quiz_id);
+    $params = array('quiz_id' => $quiz_id);
 
-        $all_quiz_reports = $DB->get_records_sql($sql, $params);
-        //print_r($all_quiz_reports);
+    $all_quiz_reports = $DB->get_records_sql($sql, $params);
+    //print_r($all_quiz_reports);
 }
 
 ?>
@@ -675,7 +675,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
                     </a>
-                    <span class="text-sm font-normal text-gray-500 ">Page<span class="font-semibold text-gray-900 ">1 of 1 </span>| <span class="text-sm font-normal text-gray-500 pr-1 ">Go to Page</span></span>
+                    <span class="text-sm font-normal text-gray-500 ">Page <span class="font-semibold text-gray-900 "> 1 of 1 </span>| <span class="text-sm font-normal text-gray-500 pr-1 ">Go to Page</span></span>
                     <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-7 h-7 px-1" placeholder="1">
 
                 </div>
