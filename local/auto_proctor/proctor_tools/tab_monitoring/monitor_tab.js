@@ -17,7 +17,8 @@ $(document).ready(function () {
         navigator.mediaDevices.getDisplayMedia({ video: true })
             .then(stream => {
                 let displaySurface = stream.getVideoTracks()[0].getSettings().displaySurface;
-                if (displaySurface !== 'monitor') {
+                console.log('sharing', );
+                if (displaySurface !== 'monitor' || displaySurface === 'browser') {
                     if (confirm("You need to share the entire screen.")) {
                         location.reload();
                     }
