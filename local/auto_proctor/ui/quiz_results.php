@@ -434,7 +434,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
         </div>
         <div class="items-center sm:flex">
             <div class="flex items-center">
-                <button type="button" id="exportThis" data-quizid="<?php echo $quiz_id; ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 uppercase focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Export</button>
+                <button type="button" id="exportThis" data-quizid="<?php echo $quiz_id; ?>" data-quizname="<?php echo $quiz_name; ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 uppercase focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Export</button>
             </div>
         </div>
     </div>
@@ -714,43 +714,86 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
     //     });
     // });
 
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Select the element with the id 'exportThis'
+    //     var exportButton = document.getElementById('exportThis');
+
+    //     // Add click event listener
+    //     exportButton.addEventListener('click', function(event) {
+    //         // Prevent the default action of the button (i.e., submitting a form)
+    //         event.preventDefault();
+
+    //         // Retrieve the quizid from the data attribute
+    //         var quizId = exportButton.getAttribute('data-quizid');
+    //         var quiz_name = exportButton.getAttribute('data-quizname');
+
+    //         // Send the quizid to a PHP script via AJAX
+    //         var xhr = new XMLHttpRequest();
+    //         xhr.open('POST', 'functions/export_functions.php', true);
+    //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    //         xhr.onreadystatechange = function() {
+    //             if (xhr.readyState === XMLHttpRequest.DONE) {
+    //                 if (xhr.status === 200) {
+    //                     console.log('Quiz report saved successfully');
+    //                     // Initiate the download only when the response is received
+    //                     var blob = new Blob([xhr.response], { type: 'text/csv' });
+    //                     var link = document.createElement('a');
+    //                     link.href = window.URL.createObjectURL(blob);
+    //                     link.download = 'quiz_id_' + quizId + '_' + quiz_name + '_reports.csv';
+    //                     link.click();
+    //                 } else {
+    //                     console.error('Failed to save quiz report');
+    //                 }
+    //             }
+    //         };
+    //         xhr.send('quiz_id=' + quizId + '&quiz_name=' + quiz_name);
+
+    //         // Disable the button to prevent multiple clicks while processing
+    //         exportButton.disabled = true;
+    //     });
+    // });
+
     document.addEventListener("DOMContentLoaded", function() {
-        // Select the element with the id 'exportThis'
-        var exportButton = document.getElementById('exportThis');
+    // Select the element with the id 'exportThis'
+    var exportButton = document.getElementById('exportThis');
 
-        // Add click event listener
-        exportButton.addEventListener('click', function(event) {
-            // Prevent the default action of the button (i.e., submitting a form)
-            event.preventDefault();
+    // Add click event listener
+    exportButton.addEventListener('click', function(event) {
+        // Prevent the default action of the button (i.e., submitting a form)
+        event.preventDefault();
 
-            // Retrieve the quizid from the data attribute
-            var quizId = exportButton.getAttribute('data-quizid');
+        // Retrieve the quizid and quizname from the data attributes
+        var quizId = exportButton.getAttribute('data-quizid');
+        var quizName = exportButton.getAttribute('data-quizname');
 
-            // Send the quizid to a PHP script via AJAX
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'functions/export_functions.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        console.log('Quiz report saved successfully');
-                        // Initiate the download only when the response is received
-                        var blob = new Blob([xhr.response], { type: 'text/csv' });
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'quiz_reports.csv';
-                        link.click();
-                    } else {
-                        console.error('Failed to save quiz report');
-                    }
+        // Send the quizid and quizname to a PHP script via AJAX
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'functions/export_functions.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.responseType = 'blob'; // Set response type to blob
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log('Files saved successfully');
+
+                    // Initiate the download only when the response is received
+                    var blob = new Blob([xhr.response], { type: 'application/zip' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'QUIZ_ID_' + quizId + '_' + quizName + '_reports.zip'; // Set zip file name
+                    link.click();
+                } else {
+                    console.error('Failed to save files');
                 }
-            };
-            xhr.send('quiz_id=' + quizId);
+            }
+        };
+        xhr.send('quiz_id=' + quizId + '&quiz_name=' + quizName);
 
-            // Disable the button to prevent multiple clicks while processing
-            exportButton.disabled = true;
-        });
+        // Disable the button to prevent multiple clicks while processing
+        exportButton.disabled = true;
     });
+});
+
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
