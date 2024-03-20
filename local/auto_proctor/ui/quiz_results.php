@@ -434,7 +434,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
         </div>
         <div class="items-center sm:flex">
             <div class="flex items-center">
-                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 uppercase focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Export</button>
+                <button type="button" id="exportThis" data-quizid="<?php echo $quiz_id; ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 uppercase focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Export</button>
             </div>
         </div>
     </div>
@@ -684,6 +684,73 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
     </div>
 </main>
 <script>
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Select the element with the id 'exportThis'
+    //     var exportButton = document.getElementById('exportThis');
+
+    //     // Add click event listener
+    //     exportButton.addEventListener('click', function(event) {
+    //         // Prevent the default action of the button (i.e., submitting a form)
+    //         event.preventDefault();
+
+    //         // Retrieve the quizid from the data attribute
+    //         var quizId = exportButton.getAttribute('data-quizid');
+
+    //         // Send the quizid to a PHP script via AJAX
+    //         var xhr = new XMLHttpRequest();
+    //         xhr.open('POST', 'functions/export_functions.php', true);
+    //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    //         xhr.onreadystatechange = function() {
+    //             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+    //                 console.log('Quiz report saved successfully');
+    //                 // Reload the page after the report is saved
+    //                 //location.reload();
+    //             }
+    //         };
+    //         xhr.send('quiz_id=' + quizId);
+
+    //         // Disable the button to prevent multiple clicks while processing
+    //         exportButton.disabled = true;
+    //     });
+    // });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select the element with the id 'exportThis'
+        var exportButton = document.getElementById('exportThis');
+
+        // Add click event listener
+        exportButton.addEventListener('click', function(event) {
+            // Prevent the default action of the button (i.e., submitting a form)
+            event.preventDefault();
+
+            // Retrieve the quizid from the data attribute
+            var quizId = exportButton.getAttribute('data-quizid');
+
+            // Send the quizid to a PHP script via AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'functions/export_functions.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('Quiz report saved successfully');
+                        // Initiate the download only when the response is received
+                        var blob = new Blob([xhr.response], { type: 'text/csv' });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'quiz_reports.csv';
+                        link.click();
+                    } else {
+                        console.error('Failed to save quiz report');
+                    }
+                }
+            };
+            xhr.send('quiz_id=' + quizId);
+
+            // Disable the button to prevent multiple clicks while processing
+            exportButton.disabled = true;
+        });
+    });
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>

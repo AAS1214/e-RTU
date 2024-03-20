@@ -83,7 +83,7 @@ $strict_mode_activated = $jsdata['strict_mode_activated'];
                 <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Monitor Detected</h1>
 
                 <p class="mb-4 text-base font-normal text-gray-700 text-start ">We have detected multiple monitors. Please disconnect the extra monitor (or devices like Chromecast).</p>
-                <p class="mb-8 text-base font-normal text-gray-700 text-start ">IIf you continue without disconnecting, AutoProctor will store details of the device.</p>
+                <p class="mb-8 text-base font-normal text-gray-700 text-start ">If you continue without disconnecting, AutoProctor will store details of the device.</p>
                 <button onclick = "haveNotConnMonitor()" id = "have-not-multiple-btn" data-modal-hide="popup-modal" type="button" class="text-white bg-[#6B7280] hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2">
                     Haven’t connected Multiple Monitors
                 </button>
@@ -125,6 +125,10 @@ $strict_mode_activated = $jsdata['strict_mode_activated'];
                 </div>
                 <p class="text-base leading-relaxed text-black ">
                     If you see a completely black screen, it is mostly a camera error. Check your device’s camera.
+                </p>
+                <p class="text-base leading-relaxed text-black ">
+                Make sure you are in the middle of the camera preview and in a 
+                    well-lit area before starting the exam.
                 </p>
             </div>
             <!-- Modal footer -->
