@@ -330,7 +330,7 @@ if (isset($_POST['quiz_id'])) {
                     $lastname,
                     $report->attempt,
                     $report->activity_type,
-                    $report->evidence,
+                    urlencode($report->evidence),
                 );
                 fputcsv($output, $row);
             }
@@ -401,7 +401,7 @@ if (isset($_POST['quiz_id'])) {
                 $firstname,
                 $lastname,
                 $recording->attempt,
-                $recording->camera_recording,
+                urlencode($recording->camera_recording),
             );
             fputcsv($output, $row);
         }
