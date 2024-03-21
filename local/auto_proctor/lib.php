@@ -492,22 +492,22 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                         AND attempt = :attempt
                     ";
 
-                    $params['trust_score'] = $update_data->trust_score;
+                    $params['trust_score']    = $update_data->trust_score;
                     $update_trust_score = $DB->execute($sql, $params);
                 }
 
 
             
-            // DEBUGGING
-                echo "</br>";
-                print_r($quiz_report);
-                echo "</br>";
-                echo "monitor setup: " . $monitor_setup . "</br>";
-                echo "violation points: " . $violation_points . "</br>";
-                echo "================================================================";
-                echo "</br>";
-                echo "</br>";
-                $violation_points = 0;
+            // // DEBUGGING
+            //     echo "</br>";
+            //     print_r($quiz_report);
+            //     echo "</br>";
+            //     echo "monitor setup: " . $monitor_setup . "</br>";
+            //     echo "violation points: " . $violation_points . "</br>";
+            //     echo "================================================================";
+            //     echo "</br>";
+            //     echo "</br>";
+            //     $violation_points = 0;
         }
 }
 
