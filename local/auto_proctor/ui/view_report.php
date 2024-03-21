@@ -218,9 +218,19 @@ global $DB, $USER, $CFG;
                 ";
                 $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
                 $quiz_session_recordings = $DB->get_records_sql($sql, $params);
-                print_r($quiz_session_recordings);
+                //print_r($quiz_session_recordings);
                 $count_record = count($quiz_session_recordings);
-                echo $count_record;
+                //echo $count_record;
+
+            // SELECTING TRUST SCORE
+                $sql = "SELECT trust_score
+                    FROM {auto_proctor_trust_score_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt;
+                ";
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
+                $trust_score = $DB->get_fieldset_sql($sql, $params);
 
     }
 
@@ -367,7 +377,16 @@ global $DB, $USER, $CFG;
                                 <!--TRUST SCORE-->
                                 <div
                                     class="flex flex-col items-center justify-center rounded-lg p-4 mx-4 shadow-lg bg-gray-100">
-                                    <dt class="mb-2 text-xl md:text-3xl font-bold">40%</dt>
+                                    <dt class="mb-2 text-xl md:text-3xl font-bold">
+                                        <?php
+                                            if ($trust_score){
+                                                echo $trust_score[0] . '%';
+                                            }
+                                            else{
+                                                echo '0%';
+                                            }
+                                        ?>
+                                    </dt>
                                     <span class="text-gray-500 "> TRUST SCORE
                                     </span>
                                 </div>
