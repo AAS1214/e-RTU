@@ -789,8 +789,6 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
         };
         xhr.send('quiz_id=' + quizId + '&quiz_name=' + quizName);
 
-        // Disable the button to prevent multiple clicks while processing
-        exportButton.disabled = true;
     });
 });
 
