@@ -203,9 +203,150 @@ if (isset($_POST['quiz_id'])) {
     $quiz_id = $_POST['quiz_id'];
     $quiz_name = $_POST['quiz_name'];
 
-    // Your SQL query
+    // ===== SELECT ACITIVITY REPORTS
+        $sql = "SELECT *
+                FROM {auto_proctor_activity_report_tb}
+                WHERE quizid = :quiz_id
+                ORDER BY userid
+            ;
+        ";
+
+        // Parameters for the query
+        $params = array('quiz_id' => $quiz_id);
+
+        // Fetch records from the database
+        $all_quiz_reports = $DB->get_records_sql($sql, $params);
+
+        $all_quiz_camera_recording = $DB->get_records_sql($sql, $params);
+
+        if ($all_quiz_reports) {
+            // Define CSV headers
+            $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'ACTIVITY_TYPE', 'EVIDENCE'); // Add USERNAME header
+        
+            // Set the CSV filename
+            $filename = 'activity_reports.csv';
+        
+            // Output CSV data
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+            // Open output stream
+            ob_start();
+            $output = fopen('php://output', 'w');
+        
+            // Write CSV headers
+            fputcsv($output, $headers);
+        
+            // Add files from URLs to the zip archive
+            $fileUrls = array();
+            // Write CSV rows
+            foreach ($all_quiz_reports as $report) {
+                $activity_type = $report->activity_type;
+
+                switch ($activity_type) {
+                    case 1:
+                        $activity_name = 'Did not share screen';
+                        break;
+                    case 2:
+                        $activity_name = 'Shared Screen';
+                        break;
+                    case 3:
+                        $activity_name = 'Stops Sharing';
+                        break;
+                    case 4:
+                        $activity_name = 'Tab Switch';
+                        break;
+                    case 5:
+                        $activity_name = 'Tab switch but not shared';
+                        break;
+                    case 6:
+                        $activity_name = 'Camera permission denied';
+                        break;
+                    case 7:
+                        $activity_name = 'Camera permission denied during quiz';
+                        break;
+                    case 8:
+                        $activity_name = 'No Face';
+                        break;
+                    case 9:
+                        $activity_name = 'Multiple Face';
+                        break;
+                    case 10:
+                        $activity_name = 'Suspicious Movement';
+                        break;
+                    case 11:
+                        $activity_name = 'Microphone permission denied';
+                        break;
+                    case 12:
+                        $activity_name = 'Microphone permission denied during quiz';
+                        break;
+                    case 13:
+                        $activity_name = 'Speech detected';
+                        break;
+                    case 14:
+                        $activity_name = 'Loud noise';
+                        break;
+                }
+
+                // Fetch user information based on userid
+                $userid = $report->userid;
+                $sql = "SELECT * FROM {user} WHERE id = :userid";
+                $params = array('userid' => $userid);
+                $userinfo = $DB->get_record_sql($sql, $params);
+                
+                // Construct the full name
+                $firstname = $userinfo->firstname;
+                $lastname = $userinfo->lastname;
+                $idnumber = $userinfo->idnumber;
+                
+
+                // Get the file extension from the evidence URL
+                $extension = pathinfo(parse_url($report->evidence, PHP_URL_PATH), PATHINFO_EXTENSION);
+                
+                // Determine the directory based on the file extension
+                if ($extension === "png" || $extension === "webm"){
+                    if ($activity_type >= 1 && $activity_type <= 5){
+                        //echo "<script>console.log(". $activity_type .");</script>";urlencode($report->evidence)
+                        $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/screen_capture_evidence/' . urlencode($report->evidence);
+                    }
+                    if ($activity_type >= 6 && $activity_type <= 10){
+                        //echo "<script>console.log(". $activity_type .");</script>";
+                        $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/camera_capture_evidence/' . urlencode($report->evidence);
+                    }
+                }
+                else if ($extension === "wav"){
+                    $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/microphone_capture_evidence/' . urlencode($report->evidence);
+                }
+
+                if ($directory){
+                    $fileUrls[] = $directory;
+                }
+                
+                // Adjust this according to your table structure
+                $row = array(
+                    $report->event_datetime,
+                    $idnumber,
+                    $firstname,
+                    $lastname,
+                    $report->attempt,
+                    $report->activity_type,
+                    $report->evidence,
+                );
+                fputcsv($output, $row);
+            }
+            
+        
+            // Close the output stream
+            fclose($output);
+            $csv_content = ob_get_clean();
+        } else {
+            // Handle the case where no records were fetched
+            $csv_content = "No quiz reports found for the specified quiz ID.";
+        }
+
+    // ===== SELECT CAMERA RECORDINGS
     $sql = "SELECT *
-            FROM {auto_proctor_activity_report_tb}
+            FROM {auto_proctor_session_camera_recording}
             WHERE quizid = :quiz_id
             ORDER BY userid
         ;
@@ -213,16 +354,14 @@ if (isset($_POST['quiz_id'])) {
 
     // Parameters for the query
     $params = array('quiz_id' => $quiz_id);
+    $all_quiz_camera_recording = $DB->get_records_sql($sql, $params);
 
-    // Fetch records from the database
-    $all_quiz_reports = $DB->get_records_sql($sql, $params);
-
-    if ($all_quiz_reports) {
+    if ($all_quiz_camera_recording) {
         // Define CSV headers
-        $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'ACTIVITY_TYPE', 'EVIDENCE'); // Add USERNAME header
+        $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'CAMERA RECORDING'); // Add USERNAME header
     
         // Set the CSV filename
-        $filename = 'activity_reports.csv';
+        $camera_recording_filename = 'camera_recordings.csv';
     
         // Output CSV data
         header('Content-Type: text/csv');
@@ -234,60 +373,12 @@ if (isset($_POST['quiz_id'])) {
     
         // Write CSV headers
         fputcsv($output, $headers);
-    
-        // Add files from URLs to the zip archive
-        $fileUrls = array();
-        // Write CSV rows
-        foreach ($all_quiz_reports as $report) {
-            $activity_type = $report->activity_type;
 
-            switch ($activity_type) {
-                case 1:
-                    $activity_name = 'Did not share screen';
-                    break;
-                case 2:
-                    $activity_name = 'Shared Screen';
-                    break;
-                case 3:
-                    $activity_name = 'Stops Sharing';
-                    break;
-                case 4:
-                    $activity_name = 'Tab Switch';
-                    break;
-                case 5:
-                    $activity_name = 'Tab switch but not shared';
-                    break;
-                case 6:
-                    $activity_name = 'Camera permission denied';
-                    break;
-                case 7:
-                    $activity_name = 'Camera permission denied during quiz';
-                    break;
-                case 8:
-                    $activity_name = 'No Face';
-                    break;
-                case 9:
-                    $activity_name = 'Multiple Face';
-                    break;
-                case 10:
-                    $activity_name = 'Suspicious Movement';
-                    break;
-                case 11:
-                    $activity_name = 'Microphone permission denied';
-                    break;
-                case 12:
-                    $activity_name = 'Microphone permission denied during quiz';
-                    break;
-                case 13:
-                    $activity_name = 'Speech detected';
-                    break;
-                case 14:
-                    $activity_name = 'Loud noise';
-                    break;
-            }
+        // Write CSV rows
+        foreach ($all_quiz_camera_recording as $recording) {
 
             // Fetch user information based on userid
-            $userid = $report->userid;
+            $userid = $recording->userid;
             $sql = "SELECT * FROM {user} WHERE id = :userid";
             $params = array('userid' => $userid);
             $userinfo = $DB->get_record_sql($sql, $params);
@@ -296,39 +387,21 @@ if (isset($_POST['quiz_id'])) {
             $firstname = $userinfo->firstname;
             $lastname = $userinfo->lastname;
             $idnumber = $userinfo->idnumber;
-            
-
-            // Get the file extension from the evidence URL
-            $extension = pathinfo(parse_url($report->evidence, PHP_URL_PATH), PATHINFO_EXTENSION);
-            
-            // Determine the directory based on the file extension
-            if ($extension === "png" || $extension === "webm"){
-                if ($activity_type >= 1 && $activity_type <= 5){
-                    //echo "<script>console.log(". $activity_type .");</script>";urlencode($report->evidence)
-                    $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/screen_capture_evidence/' . urlencode($report->evidence);
-                }
-                if ($activity_type >= 6 && $activity_type <= 10){
-                    //echo "<script>console.log(". $activity_type .");</script>";
-                    $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/camera_capture_evidence/' . urlencode($report->evidence);
-                }
-            }
-            else if ($extension === "wav"){
-                $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/microphone_capture_evidence/' . urlencode($report->evidence);
-            }
-
-            if ($directory){
+        
+        
+            if ($recording->camera_recording){
+                $directory = $CFG->wwwroot . '/local/auto_proctor/proctor_tools/evidences/camera_capture_evidence/' . urlencode($recording->camera_recording);
                 $fileUrls[] = $directory;
             }
             
              // Adjust this according to your table structure
              $row = array(
-                $report->event_datetime,
+                $recording->event_datetime,
                 $idnumber,
                 $firstname,
                 $lastname,
-                $report->attempt,
-                $report->activity_type,
-                $report->evidence,
+                $recording->attempt,
+                $recording->camera_recording,
             );
             fputcsv($output, $row);
         }
@@ -336,10 +409,10 @@ if (isset($_POST['quiz_id'])) {
     
         // Close the output stream
         fclose($output);
-        $csv_content = ob_get_clean();
+        $csv_camera_recordings = ob_get_clean();
     } else {
         // Handle the case where no records were fetched
-        $csv_content = "No quiz reports found for the specified quiz ID.";
+        $csv_camera_recordings = "No quiz recording found for the specified quiz ID.";
     }
 
     // Create a new ZipArchive instance
@@ -352,6 +425,7 @@ if (isset($_POST['quiz_id'])) {
     if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
         // Add the CSV content to the zip archive
         $zip->addFromString($filename, $csv_content);
+        $zip->addFromString($camera_recording_filename, $csv_camera_recordings);
 
         foreach ($fileUrls as $fileUrl) {
             $fileContent = file_get_contents($fileUrl);

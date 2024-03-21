@@ -367,6 +367,148 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
     $quizProctor = new QuizProctor($PAGE, $DB, $CFG, $USER, $COURSE);
     $quizProctor->captureQuizAttempt($USER->id, $COURSE);
+
+
+    // ================== COMPUTE TRUST SCORE ===================
+        $sql = "SELECT *
+            FROM {auto_proctor_activity_report_tb}
+            GROUP BY userid, quizid, attempt
+        ";
+
+        $all_reports = $DB->get_records_sql($sql);
+
+        foreach ($all_reports as $report) {
+            $userid = $report->userid;
+            $quizid = $report->quizid;
+            $attempt = $report->attempt;
+
+            // SELECT ALL VIOLATION OF USERS QUIZ PER ATTEMPT
+            $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :userid
+                    AND quizid = :quizid
+                    AND attempt = :attempt
+                ";
+            $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attempt);
+            $quiz_report = $DB->get_records_sql($sql, $params);
+
+            foreach ($quiz_report as $activity){
+                $violation = $activity->activity_type;
+
+                switch ($violation) {
+                    case 1:
+                        $violation_points += 10;
+                        break;
+                    case 3:
+                        $violation_points += 5;
+                        break;
+                    case 4:
+                        $violation_points += 75;
+                        break;
+                    case 5:
+                        $violation_points += 85;
+                        break;
+                    case 6:
+                        $violation_points += 2;
+                        break;
+                    case 7:
+                        $violation_points += 10;
+                        break;
+                    case 8:
+                        $violation_points += 5;
+                        break;
+                    case 9:
+                        $violation_points += 2;
+                        break;
+                    case 10:
+                        $violation_points += 0.5;
+                        break;
+                    case 11:
+                        $violation_points += 0.5;
+                        break;
+                    case 12:
+                        $violation_points += 2;
+                        break;
+                    case 13:
+                        $violation_points += 0.5;
+                        break;
+                    case 14:
+                        $violation_points += 0.5;
+                        break;
+                }
+            }
+
+            // SELECT MONITOR SETUP OF USERS QUIZ PER ATTEMPT
+            $sql = "SELECT monitor_setup
+                    FROM {auto_proctor_proctoring_session_tb}
+                    WHERE userid = :userid
+                    AND quizid = :quizid
+                    AND attempt = :attempt
+                ";
+            $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attempt);
+            $session_setup = $DB->get_fieldset_sql($sql, $params);
+
+            $monitor_setup = $session_setup[0];
+
+            if ($monitor_setup == 2){
+                $violation_points += 5;
+            }
+
+            // MAX OF VIOLATION POINTS IS 100
+                if ($violation_points > 100){
+                    $violation_points = 100;
+                }
+
+            // SELECT AND UPDATE TRUST SOCRE 
+
+                $sql = "SELECT *
+                    FROM {auto_proctor_trust_score_tb}
+                    WHERE userid = :userid
+                    AND quizid = :quizid
+                    AND attempt = :attempt
+                ";
+                $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attempt);
+                $select_trust_score = $DB->get_fieldset_sql($sql, $params);
+
+                if (!$select_trust_score){
+                    $insertData = new stdClass();
+                    $insertData->userid = $userid;
+                    $insertData->quizid = $quizid;
+                    $insertData->attempt = $attempt;
+                    $insertData->trust_score = $violation_points;
+                    $insert_trust_score = $DB->insert_record('auto_proctor_trust_score_tb', $insertData);
+                }
+                else{
+                    // UPDATE TRUST SCORE
+                    $update_data = new stdClass();
+                    $update_data->trust_score = $violation_points;
+
+                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attempt);
+
+                    $sql = "UPDATE {auto_proctor_trust_score_tb}
+                        SET trust_score = :trust_score
+                        WHERE userid = :userid
+                        AND quizid = :quizid
+                        AND attempt = :attempt
+                    ";
+
+                    $params['trust_score'] = $update_data->trust_score;
+                    $update_trust_score = $DB->execute($sql, $params);
+                }
+
+
+            
+            // DEBUGGING
+                echo "</br>";
+                print_r($quiz_report);
+                echo "</br>";
+                echo "monitor setup: " . $monitor_setup . "</br>";
+                echo "violation points: " . $violation_points . "</br>";
+                echo "================================================================";
+                echo "</br>";
+                echo "</br>";
+                $violation_points = 0;
+        }
 }
 
 
