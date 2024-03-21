@@ -365,7 +365,7 @@ if (isset($_POST['quiz_id'])) {
     
         // Output CSV data
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Disposition: attachment; filename="' . $camera_recording_filename . '"');
     
         // Open output stream
         ob_start();
@@ -415,6 +415,72 @@ if (isset($_POST['quiz_id'])) {
         $csv_camera_recordings = "No quiz recording found for the specified quiz ID.";
     }
 
+
+    // ===== SELECT TRUST SCORES
+    $sql = "SELECT *
+            FROM {auto_proctor_trust_score_tb}
+            WHERE quizid = :quiz_id
+            ORDER BY userid
+        ;
+    ";
+
+    // Parameters for the query
+    $params = array('quiz_id' => $quiz_id);
+    $all_quiz_trust_score= $DB->get_records_sql($sql, $params);
+
+    if ($all_quiz_trust_score) {
+        // Define CSV headers
+        $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'TRUST SCORE'); // Add USERNAME header
+    
+        // Set the CSV filename
+        $trust_score_filename = 'trust_score.csv';
+    
+        // Output CSV data
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $trust_score_filename . '"');
+    
+        // Open output stream
+        ob_start();
+        $output = fopen('php://output', 'w');
+    
+        // Write CSV headers
+        fputcsv($output, $headers);
+
+        // Write CSV rows
+        foreach ($all_quiz_trust_score as $trust_score) {
+
+            // Fetch user information based on userid
+            $userid = $trust_score->userid;
+            $sql = "SELECT * FROM {user} WHERE id = :userid";
+            $params = array('userid' => $userid);
+            $userinfo = $DB->get_record_sql($sql, $params);
+            
+            // Construct the full name
+            $firstname = $userinfo->firstname;
+            $lastname = $userinfo->lastname;
+            $idnumber = $userinfo->idnumber;
+            
+             // Adjust this according to your table structure
+             $row = array(
+                $trust_score->event_datetime,
+                $idnumber,
+                $firstname,
+                $lastname,
+                $trust_score->attempt,
+                $trust_score->trust_score,
+            );
+            fputcsv($output, $row);
+        }
+        
+    
+        // Close the output stream
+        fclose($output);
+        $csv_trust_score = ob_get_clean();
+    } else {
+        // Handle the case where no records were fetched
+        $csv_trust_score = "No quiz recording found for the specified quiz ID.";
+    }
+
     // Create a new ZipArchive instance
     $zip = new ZipArchive();
 
@@ -426,6 +492,7 @@ if (isset($_POST['quiz_id'])) {
         // Add the CSV content to the zip archive
         $zip->addFromString($filename, $csv_content);
         $zip->addFromString($camera_recording_filename, $csv_camera_recordings);
+        $zip->addFromString($trust_score_filename, $csv_trust_score);
 
         foreach ($fileUrls as $fileUrl) {
             $fileContent = file_get_contents($fileUrl);
