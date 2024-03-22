@@ -166,55 +166,10 @@ $wwwroot = $CFG->wwwroot;;
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
-                    <input type="text" name="text" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
+                    <input type="text" name="text" id="topbar-search" onkeyup="myFunction()" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
                 </div>
             </form>
-            <div class="flex items-center pl-2 mb-2">
-                <button id="dropdownDefault" data-dropdown-toggle="dropdown" class=" sm:mb-0 mr-4 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2 " type="button">
-                    Filter
-                    <svg class="w-5 h-5 ml-1 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z" />
-                    </svg>
-
-                </button>
-
-                <!-- Dropdown menu -->
-                <div id="dropdown" class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow ">
-                    <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                        <li class="flex items-center">
-                            <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 " />
-
-                            <label for="apple" class="ml-2 text-sm font-medium text-gray-900 ">
-                                Course name
-                            </label>
-                        </li>
-
-                        <li class="flex items-center">
-                            <input id="fitbit" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 " />
-
-                            <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900 ">
-                                Course name
-                            </label>
-                        </li>
-
-                        <li class="flex items-center">
-                            <input id="dell" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 " />
-
-                            <label for="dell" class="ml-2 text-sm font-medium text-gray-900 ">
-                                Course name
-                            </label>
-                        </li>
-                        <li class="flex items-center">
-                            <input id="dell" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 " />
-
-                            <label for="dell" class="ml-2 text-sm font-medium text-gray-900 ">
-                                Course name
-                            </label>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
+            
         </div>
     </div>
     <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm ">
@@ -223,11 +178,11 @@ $wwwroot = $CFG->wwwroot;;
             <div class="overflow-x-auto rounded-lg">
                 <div class="inline-block min-w-full align-middle">
                     <div class="overflow-hidden shadow sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200 ">
+                        <table id="quizTable" class="min-w-full divide-y divide-gray-200 ">
                             <thead class="bg-gray-100 ">
                                 <tr>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button onclick="sortTableByName()" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Quiz Name
                                                 <span class="ml-2">
@@ -242,7 +197,7 @@ $wwwroot = $CFG->wwwroot;;
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button onclick="sortTableByCourse()" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 course
                                                 <span class="ml-2">
@@ -257,7 +212,7 @@ $wwwroot = $CFG->wwwroot;;
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button onclick="sortTableByProctor()" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Proctor
                                                 <span class="ml-2">
@@ -272,7 +227,7 @@ $wwwroot = $CFG->wwwroot;;
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button onclick="sortTableByDate()" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Date Created
                                                 <span class="ml-2">
@@ -289,14 +244,10 @@ $wwwroot = $CFG->wwwroot;;
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
                                         <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
-                                                Restore
+                                                
                                                 <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
-
+                                            
                                                 </span>
                                             </div>
                                         </button>
@@ -306,83 +257,6 @@ $wwwroot = $CFG->wwwroot;;
                             </thead>
                             <tbody class="bg-white ">
                                 <?php
-                                // foreach($ap_quiz_records as $ap_quiz){
-                                //     $sql = "SELECT name
-                                //         FROM {quiz}
-                                //         WHERE id = :quiz_id;
-                                //     ";
-                                //     $param = array('quiz_id' => $ap_quiz->quizid);
-                                //     $quiz_name = $DB->get_fieldset_sql($sql, $param);
-
-                                //     $sql = "SELECT shortname
-                                //         FROM {course}
-                                //         WHERE id = :course_id;
-                                //     ";
-                                //     $param = array('course_id' => $ap_quiz->course);
-                                //     $course_name = $DB->get_fieldset_sql($sql, $param);
-
-                                //     // SELECT TEACHERS OR QUIZ
-                                //     $teacher_role_id = 3;
-                                //     $editing_teacher_role_id = 4; 
-
-                                //     $sql = "SELECT DISTINCT u.*
-                                //             FROM {user} u
-                                //             INNER JOIN {role_assignments} ra ON ra.userid = u.id
-                                //             INNER JOIN {context} ctx ON ctx.id = ra.contextid
-                                //             INNER JOIN {course} c ON c.id = ctx.instanceid
-                                //             WHERE c.id = :course_id
-                                //             AND (ra.roleid = :teacher_role_id OR ra.roleid = :editing_teacher_role_id)";
-
-                                //     // Parameters for the SQL query
-                                //     $params = array(
-                                //         'course_id' => $ap_quiz->course,
-                                //         'teacher_role_id' => $teacher_role_id,
-                                //         'editing_teacher_role_id' => $editing_teacher_role_id
-                                //     );
-
-                                //     $course_teacher = $DB->get_records_sql($sql, $params);
-
-                                //     // SELECT THE DATE CREATED OF QUIZ
-                                //     $sql = "SELECT timecreated
-                                //         FROM {quiz}
-                                //         WHERE id = :quiz_id;
-                                //     ";
-                                //     $param = array('quiz_id' => $ap_quiz->quizid);
-                                //     $date_created = $DB->get_fieldset_sql($sql, $param);
-
-                                //     //print_r($course_teacher);
-
-                                //     echo '
-                                //         <tr>
-                                //             <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                //                 <h1>'. $quiz_name[0].'</h1>
-                                //                 <span class="font-normal text-[10px] text-center">
-                                //                     <a href="" class="pl-2">PREVIEW</a>
-                                //                 </span>
-                                //             </td>
-                                //             <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                //                 '. $course_name[0] .'
-                                //             </td>
-                                //             <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                //             '
-                                //         ;
-                                //             foreach($course_teacher as $teacher){
-                                //                 $teacher_fullname = $teacher->firstname . ' ' . $teacher->lastname;
-
-                                //                 echo $teacher_fullname;
-                                //             }
-                                //     echo '
-                                //             </td>
-                                //             <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                //                 '. date("d M Y", $date_created[0]) .'
-                                //             </td>
-                                //             <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
-                                //                 <a href="">Restore</a>
-                                //             </td>
-                                //         </tr>
-                                //     ';
-                                // }
-
                                 foreach ($ap_quiz_records as $archived_quiz) {
                                     // Select quiz name
                                     $sql = "SELECT name
@@ -617,6 +491,135 @@ $wwwroot = $CFG->wwwroot;;
         var overlay = document.getElementById('overlay');
         if (overlay) {
             overlay.parentNode.removeChild(overlay);
+        }
+    }
+
+    var ascending = true;
+    var ascendingCourse = true;
+    var ascendingProctor = true;
+    var ascendingDate = true;
+
+    function sortTableByName() {
+        console.log("Sorting table by name...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var nameA = a.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            var nameB = b.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            
+            // Toggle sorting direction
+            var comparison = ascending ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascending = !ascending; // Toggle sorting direction
+    }
+
+    function sortTableByCourse() {
+        console.log("Sorting table by course...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var courseA = a.querySelector('.p-4.text-sm.font-normal:nth-of-type(2)').innerText.trim().toLowerCase();
+            var courseB = b.querySelector('.p-4.text-sm.font-normal:nth-of-type(2)').innerText.trim().toLowerCase();
+            
+            // Toggle sorting direction
+            var comparison = ascendingCourse ? courseB.localeCompare(courseA) : courseA.localeCompare(courseB);
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascendingCourse = !ascendingCourse; // Toggle sorting direction
+    }
+
+    function sortTableByProctor() {
+        console.log("Sorting table by proctor...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var proctorA = a.querySelector('.p-4.text-sm.font-normal:nth-of-type(3)').innerText.trim().toLowerCase();
+            var proctorB = b.querySelector('.p-4.text-sm.font-normal:nth-of-type(3)').innerText.trim().toLowerCase();
+            
+            // Toggle sorting direction
+            var comparison = ascendingProctor ? proctorB.localeCompare(proctorA) : proctorA.localeCompare(proctorB);
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascendingProctor = !ascendingProctor; // Toggle sorting direction
+    }
+
+    function sortTableByDate() {
+        console.log("Sorting table by date created...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var dateA = new Date(a.querySelector('.p-4.text-sm.font-normal:nth-of-type(4)').innerText.trim());
+            var dateB = new Date(b.querySelector('.p-4.text-sm.font-normal:nth-of-type(4)').innerText.trim());
+            
+            // Toggle sorting direction
+            var comparison = ascendingDate ? dateB - dateA : dateA - dateB;
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascendingDate = !ascendingDate; // Toggle sorting direction
+    }
+
+    function myFunction() {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("topbar-search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("quizTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows
+        for (i = 0; i < tr.length; i++) {
+            var found = false; // Flag to indicate if the search query is found in any cell
+
+            // Loop through all cells in the current row
+            for (j = 0; j < tr[i].cells.length; j++) {
+                td = tr[i].cells[j];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    // Check if the cell text contains the search query
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true; // Set the flag to true if a match is found
+                        break; // No need to check other cells if a match is found
+                    }
+                }
+            }
+            // Display or hide the row based on whether the search query is found
+            if (found) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
         }
     }
 </script>

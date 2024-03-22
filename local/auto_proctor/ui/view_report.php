@@ -194,6 +194,7 @@ global $DB, $USER, $CFG;
             $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
             $quiz_activities = $DB->get_records_sql($sql, $params);
 
+
             foreach ($quiz_activities as $activity){
                 if ($activity->activity_type == 13 || $activity->activity_type == 14){
                     $num_of_noise_detected++;
@@ -231,6 +232,125 @@ global $DB, $USER, $CFG;
                 ";
                 $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
                 $trust_score = $DB->get_fieldset_sql($sql, $params);
+
+
+        // FILTER
+            if(isset($_GET['All'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    ;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if(isset($_GET['onlyEvd'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND evidence IS NOT NULL;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if(isset($_GET['onlyNoEvd'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND evidence IS NULL;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['noFace'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type = :activity;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity' => 8);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['multipleFace'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type = :activity;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity' => 9);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['susMovement'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type = :activity;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity' => 10);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['loudNoise'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type = :activity;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity' => 14);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['speechDetected'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type = :activity;
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity' => 13);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
+
+            if (isset($_GET['tabSwitch'])){
+                $sql = "SELECT *
+                    FROM {auto_proctor_activity_report_tb}
+                    WHERE userid = :user_id
+                    AND quizid = :quiz_id
+                    AND attempt = :quiz_attempt
+                    AND activity_type IN (:activity1, :activity2);
+                ";
+
+                $params = array('user_id' => $user_id, 'quiz_id' => $quiz_id, 'quiz_attempt' => $quiz_attempt, 'activity1' => 4, 'activity2' => 5);
+                $quiz_activities = $DB->get_records_sql($sql, $params);
+            }
 
     }
 
@@ -740,64 +860,58 @@ global $DB, $USER, $CFG;
                                         <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&All=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     All
                                                 </a>
                                             </li>
 
                                             <li class="flex items-center">
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
-                                                    Only With Evidence
-                                                </a>
-                                            </li>
 
-                                            <li class="flex items-center">
-
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&onlyNoEvd=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Only Violations With No
                                                     Evidence
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&onlyEvd=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Only Violations With
                                                     Evidence
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&noFace=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     No Face On Camera
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&multipleFace=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Multiple Face Detected
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&susMovement=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Suspicious Movement Detected
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&loudNoise=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Loud Noise Detected
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&speechDetected=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Speech Detected
                                                 </a>
                                             </li>
                                             <li class="flex items-center">
 
-                                                <a href class="ml-2 text-sm font-medium text-gray-900 ">
+                                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id.'&user_id='.$user_id.'&quiz_id='.$quiz_id.'&quiz_attempt='. $quiz_attempt .'&tabSwitch=1';?>" class="ml-2 text-sm font-medium text-gray-900 ">
                                                     Tab Switch
                                                 </a>
                                             </li>

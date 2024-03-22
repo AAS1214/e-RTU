@@ -99,7 +99,7 @@ $wwwroot = $CFG->wwwroot
                         <div>
                             <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 " id="user-menu-button-2" aria-expanded="false" data-dropdown-toggle="dropdown-2">
                                 <span class="sr-only">Open user menu</span>
-                                <img class="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
+                                <img class="w-8 h-8 rounded-full" src="https://iconspng.com/_next/image?url=https%3A%2F%2Ficonspng.com%2Fimages%2F-abstract-user-icon-1%2F-abstract-user-icon-1.jpg&w=640&q=75" alt="user photo">
                             </button>
                         </div>
 
