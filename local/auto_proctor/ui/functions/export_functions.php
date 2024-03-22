@@ -224,7 +224,7 @@ if (isset($_POST['quiz_id'])) {
             $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'ACTIVITY_TYPE', 'EVIDENCE'); // Add USERNAME header
         
             // Set the CSV filename
-            $filename = 'activity_reports.csv';
+            $filename = 'ACTIVITY_REPORTS.csv';
         
             // Output CSV data
             header('Content-Type: text/csv');
@@ -361,7 +361,7 @@ if (isset($_POST['quiz_id'])) {
         $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'CAMERA RECORDING'); // Add USERNAME header
     
         // Set the CSV filename
-        $camera_recording_filename = 'camera_recordings.csv';
+        $camera_recording_filename = 'CAMERA_RECORDINGS.csv';
     
         // Output CSV data
         header('Content-Type: text/csv');
@@ -430,10 +430,10 @@ if (isset($_POST['quiz_id'])) {
 
     if ($all_quiz_trust_score) {
         // Define CSV headers
-        $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'TRUST SCORE'); // Add USERNAME header
+        $headers = array('EVENT_DATETIME', 'USERID', 'FIRSTNAME', 'LASTNAME', 'ATTEMPT', 'TRUST SCORE', 'MONITOR SETUP', 'DEVICE TYPE'); // Add USERNAME header
     
         // Set the CSV filename
-        $trust_score_filename = 'trust_score.csv';
+        $trust_score_filename = 'TRUST_SCORE.csv';
     
         // Output CSV data
         header('Content-Type: text/csv');
@@ -454,6 +454,47 @@ if (isset($_POST['quiz_id'])) {
             $sql = "SELECT * FROM {user} WHERE id = :userid";
             $params = array('userid' => $userid);
             $userinfo = $DB->get_record_sql($sql, $params);
+
+            // ===== SELECT PROCTORING SETUP
+                $sql = "SELECT monitor_setup
+                    FROM {auto_proctor_proctoring_session_tb}
+                    WHERE userid = :userid
+                    AND quizid = :quiz_id
+                    AND attempt = :attempt"
+                ;
+                $params = array('userid' => $userid, 'quiz_id' => $quiz_id, 'attempt' => $trust_score->attempt);
+                $multiple_setup = $DB->get_fieldset_sql($sql, $params);
+
+                $sql = "SELECT device_type
+                    FROM {auto_proctor_proctoring_session_tb}
+                    WHERE userid = :userid
+                    AND quizid = :quiz_id
+                    AND attempt = :attempt"
+                ;
+                $params = array('userid' => $userid, 'quiz_id' => $quiz_id, 'attempt' => $trust_score->attempt);
+                $device_type = $DB->get_fieldset_sql($sql, $params);
+
+                // Select monitor setup
+                if($multiple_setup[0] == 2){
+                    $multiple_monitor = 'Yes';
+                }
+                else{
+                    $multiple_monitor = 'No';
+                }
+
+                $device = $device_type[0];
+
+                switch ($device) {
+                    case 1:
+                        $device = 'mobile';
+                        break;
+                    case 2:
+                        $device = 'tablet';
+                        break;
+                    case 3:
+                        $device = 'desktop';
+                        break;
+                }
             
             // Construct the full name
             $firstname = $userinfo->firstname;
@@ -468,6 +509,8 @@ if (isset($_POST['quiz_id'])) {
                 $lastname,
                 $trust_score->attempt,
                 $trust_score->trust_score,
+                $multiple_monitor,
+                $device,
             );
             fputcsv($output, $row);
         }
