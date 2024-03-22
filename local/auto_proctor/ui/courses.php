@@ -136,7 +136,7 @@ if (isset($_GET['course_id'])) {
             <div class="items-center sm:flex">
                 <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <form action="#" method="GET" class=" lg:pl-3">
+                        <form action="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?'; ?>" method="GET" class=" lg:pl-3">
                             <label for="topbar-search" class="sr-only">Search</label>
                             <div class="relative mt-1 lg:w-72">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 px-2 py-2 pointer-events-none">
@@ -144,7 +144,8 @@ if (isset($_GET['course_id'])) {
                                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
-                                <input type="text" name="text" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
+                                <input type="text" id="myInput" onkeyup="myFunction()" name="quizSearch" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
+                                <input type="hidden" name="course_id" value = "<?php echo $course_id; ?>">
                             </div>
                         </form>
                     </div>
@@ -159,36 +160,39 @@ if (isset($_GET['course_id'])) {
                     </button>
 
                     <!-- Dropdown menu -->
-                    <form action="">
+                    <form action="<?php echo $CFG->wwwroot .'/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='.$course_id. '&course_name='.$course_name[0] .'&datePick=1'; ?>">
                         <div id="dropdown" class="z-10 hidden w-70 p-3 bg-white rounded-lg shadow ">
                             <h6 class="mb-2 text-sm font-medium text-gray-900">
                                 Status
                             </h6>
                             <ul class="space-y-2 text-sm " aria-labelledby="dropdownDefault">
                                 <li class="inline-block">
-                                    <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                    <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" onclick="searchForComplete()" />
                                     <label for="apple" class="ml-2 text-sm font-medium text-gray-900">
                                         Completed
                                     </label>
                                 </li>
                                 <li class="inline-block pl-2">
-                                    <input id="fitbit" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                    <input id="fitbit" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" onclick="searchForInProgress()" />
                                     <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900">
                                         In progress
                                     </label>
                                 </li>
                                 <div>
-                                    <h6 class="mb-2 text-sm font-medium text-gray-900">
-                                        Date Created
-                                    </h6>
+                                        <h6 class="mb-2 text-sm font-medium text-gray-900">
+                                            Date Created
+                                        </h6>
+                                    
                                     <div id="accordion-flush" data-accordion="collapse" data-active-classes="text-black " data-inactive-classes="text-gray-500">
                                         <div id="price-body" class="" aria-labelledby="price-heading">
                                             <div class="flex items-center py-2 space-x-3 font-light border-gray-200 dark:border-gray-600">
                                                 <div class="relative">
-                                                    <input type="date" id="datepicker-from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="">
+                                                    <input type = "hidden" name = "course_id" value = "<?php echo $course_id; ?>">
+                                                    <input type = "hidden" name = "course_name" value = "<?php echo $course_name[0]; ?>">
+                                                    <input type="date" name = "from" id="datepicker-from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="">
                                                 </div>
                                                 <div class="relative">
-                                                    <input type="date" id="datepicker-to" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="hell">
+                                                    <input type="date" name = "to" id="datepicker-to" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="hell">
                                                 </div>
                                             </div>
                                         </div>
@@ -207,11 +211,11 @@ if (isset($_GET['course_id'])) {
             <div class="overflow-x-auto rounded-lg">
                 <div class="inline-block min-w-full align-middle">
                     <div class="overflow-hidden shadow sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table id="quizTable" class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button id="sortByNameBtn" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Name
                                                 <span class="ml-2">
@@ -226,7 +230,7 @@ if (isset($_GET['course_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button id = "sortByStatusBtn" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Status
                                                 <span class="ml-2">
@@ -241,27 +245,29 @@ if (isset($_GET['course_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
-                                                Date Created
-                                                <span class="ml-2">
+                                            <button onclick="sortTableByDate()" class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
+                                                    Date Created
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        
                                     </th>
                                     <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
                                     <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
                                     <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white ">
+                            <tbody class="bg-white " id="quizTableBody">
                                 <?php
+                                
                                 foreach ($ap_quiz_records as $record) {
                                     $sql = "SELECT *
                                                 FROM {quiz}
@@ -271,9 +277,52 @@ if (isset($_GET['course_id'])) {
                                     $params = array('quizid' => $quizid);
                                     $quiz_record = $DB->get_records_sql($sql, $params);
 
+                                    if (isset($_GET['from']) && isset($_GET['to'])) {
+                                        $from = $_GET['from'];
+                                        $to = $_GET['to'];
+
+                                        // Convert $from and $to to Unix timestamps
+                                        $from_timestamp = strtotime(date('Y-m-d 00:00:00', strtotime($from)));
+                                        $to_timestamp = strtotime(date('Y-m-d 23:59:59', strtotime($to)));
+
+                                        $sql = "SELECT *
+                                                FROM {quiz}
+                                                WHERE id = :quizid
+                                                AND timecreated >= :from
+                                                AND timecreated <= :to";
+
+                                        $quizid = $record->quizid;
+                                        $params = array('quizid' => $quizid, 'from' => $from_timestamp, 'to' => $to_timestamp);
+                                        $quiz_record = $DB->get_records_sql($sql, $params);
+
+                                    }
+
                                     foreach ($quiz_record as $quiz) {
                                         $timestamp = $quiz->timecreated;
                                         $formatted_date = date("d M Y", $timestamp);
+
+                                        // =========== QUIZ STATUS
+
+                                            $sql = "SELECT timeclose
+                                            FROM {quiz}
+                                            WHERE id = :quiz_id;
+                                        ";
+
+                                        $params = array('quiz_id' => $quiz->id);
+                                        $quiz_time_close = $DB->get_fieldset_sql($sql, $params);
+
+                                        $date_quiz_created = date('j-M g:i A', $quiz_time_close[0]);
+                                        $current_time = date('j-M g:i A');
+
+                                        if ($date_quiz_created > $current_time) {
+                                            $quiz_status = "In progress";
+                                        } else {
+                                            $quiz_status = "Complete";
+                                        }
+
+                                        if ($quiz_time_close[0] == 0){
+                                            $quiz_status = "In progress";
+                                        }
 
                                         echo "<script>console.log('date: ');</script>";
                                         echo
@@ -285,7 +334,7 @@ if (isset($_GET['course_id'])) {
                                                             </span>
                                                         </td>
                                                         <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                            Completed
+                                                            '. $quiz_status .'
                                                         </td>
                                                         <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
                                                             ' . $formatted_date . '
@@ -499,4 +548,163 @@ if (isset($_GET['course_id'])) {
             overlay.parentNode.removeChild(overlay);
         }
     }
+
+    var ascending = true; // Initialize sorting direction as ascending
+    var sortByStatusAscending = true; 
+    var ascendingDate = true;
+
+
+    function sortTableByName() {
+        console.log("Sorting table by name...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var nameA = a.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            var nameB = b.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            if (ascending) {
+                return nameA.localeCompare(nameB);
+            } else {
+                return nameB.localeCompare(nameA);
+            }
+        });
+        
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascending = !ascending; // Toggle sorting direction
+    }
+
+    function sortTableByStatus() {
+        console.log("Sorting table by status...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var statusA = a.querySelector('.p-4.text-sm.font-normal').innerText.trim().toLowerCase();
+            var statusB = b.querySelector('.p-4.text-sm.font-normal').innerText.trim().toLowerCase();
+            if (sortByStatusAscending) {
+                return statusA.localeCompare(statusB);
+            } else {
+                return statusB.localeCompare(statusA);
+            }
+        });
+        
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        sortByStatusAscending = !sortByStatusAscending; // Toggle sorting direction for status column
+    }
+    
+
+    // Event listener to trigger sorting function when Name button is clicked
+    document.getElementById("sortByNameBtn").addEventListener("click", function () {
+        console.log("Name button clicked...");
+        sortTableByName();
+    });
+
+    // Event listener to trigger sorting function when Status button is clicked
+    document.getElementById("sortByStatusBtn").addEventListener("click", function () {
+        console.log("Status button clicked...");
+        sortTableByStatus();
+    });
+
+    function myFunction() {
+    var input, filter, table, tr, td, i, j, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("#quizTableBody");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        let found = false;
+        for (j = 0; j < tr[i].cells.length; j++) {
+            td = tr[i].cells[j];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break; // No need to check other cells if a match is found in one cell
+                }
+            }
+        }
+        if (found) {
+            tr[i].style.display = ""; // Display the row if the search term matches in any cell
+        } else {
+            tr[i].style.display = "none"; // Hide the row if the search term doesn't match in any cell
+        }
+    }
+}
+
+function searchForComplete() {
+    var checkbox = document.getElementById("fitbit");
+    if (checkbox.checked) {
+        checkbox.checked = false;
+    } else {
+        // If checkbox is unchecked, you can perform any additional actions here
+        console.log("Checkbox is unchecked");
+    }
+
+    var checkbox = document.getElementById("apple");
+    if (checkbox.checked) {
+        var table = document.querySelector("#quizTableBody");
+        var tr = table.getElementsByTagName("tr");
+        for (var i = 0; i < tr.length; i++) {
+            var cells = tr[i].getElementsByTagName("td");
+            var found = false;
+            for (var j = 0; j < cells.length; j++) {
+                var txtValue = cells[j].textContent || cells[j].innerText;
+                if (txtValue.toUpperCase().includes("COMPLETE")) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                tr[i].style.display = ""; // Display the row if "complete" is found in any cell
+            } else {
+                tr[i].style.display = "none"; // Hide the row if "complete" is not found in any cell
+            }
+        }
+    } else {
+        myFunction(); // Call the default search function if the checkbox is unchecked
+    }
+}
+
+function searchForInProgress() {
+    var checkbox = document.getElementById("apple");
+    if (checkbox.checked) {
+        checkbox.checked = false;
+    } else {
+        // If checkbox is unchecked, you can perform any additional actions here
+        console.log("Checkbox is unchecked");
+    }
+
+    var checkbox = document.getElementById("fitbit");
+    if (checkbox.checked) {
+        var table = document.querySelector("#quizTableBody");
+        var tr = table.getElementsByTagName("tr");
+        for (var i = 0; i < tr.length; i++) {
+            var cells = tr[i].getElementsByTagName("td");
+            var found = false;
+            for (var j = 0; j < cells.length; j++) {
+                var txtValue = cells[j].textContent || cells[j].innerText;
+                if (txtValue.toUpperCase().includes("IN PROGRESS")) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                tr[i].style.display = ""; // Display the row if "in progress" is found in any cell
+            } else {
+                tr[i].style.display = "none"; // Hide the row if "in progress" is not found in any cell
+            }
+        }
+    } else {
+        myFunction(); // Call the default search function if the checkbox is unchecked
+    }
+}
+
 </script>

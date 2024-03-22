@@ -302,7 +302,7 @@ $num_of_courses = count($course_ids);
     <div class="bg-white p-4 items-center mb-8 justify-between block sm:flex ">
         <h1 class="px-4 text-md justify-start font-bold text-gray-900 sm:text-2xl py-0">Students</h1>
         <div class="flex items-center mb-4 sm:mb-0">
-            <form class="sm:pr-3" action="#" method="GET">
+            <form class="sm:pr-3" action="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php'; ?>" method="GET">
                 <label for="archive_search" class="sr-only">Search</label>
                 <div class="relative mt-1 lg:w-48">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 px-4 py-2 pointer-events-none">
@@ -310,7 +310,7 @@ $num_of_courses = count($course_ids);
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
-                    <input type="text" name="text" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
+                    <input type="text" name="homeSearch" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-black " placeholder="Search">
                 </div>
             </form>
         </div>
@@ -326,67 +326,75 @@ $num_of_courses = count($course_ids);
                                 <tr>
                                     <!--ID HERE-->
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center">
-                                                ID
-                                                <span class="ml-2">
+                                        <a id = "idSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?idAsc=1'; ?>"
+                                            <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center">
+                                                    ID
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </a>
                                     </th>
                                     <!--Name HERE-->
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center">
-                                                Name
-                                                <span class="ml-2">
+                                        <a id = "nameSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?nameAsc=1'; ?>"
+                                            <button class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center">
+                                                    Name
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </a>
                                     </th>
                                     <!--Email HERE-->
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center">
-                                                Email
-                                                <span class="ml-2">
+                                        <a id = "emailSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?emailAsc=1'; ?>"
+                                            <button  class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center">
+                                                    Email
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </a>
                                     </th>
                                     <!--Course HERE-->
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700 ">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center">
-                                                Course
-                                                <span class="ml-2">
+                                        
+                                            <button class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center">
+                                                    Course
+                                                    <!-- <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span> -->
+                                                </div>
+                                            </button>
+                                        
                                     </th>
 
                                 </tr>
@@ -394,6 +402,207 @@ $num_of_courses = count($course_ids);
                             <tbody class="bg-white ">
                                 <?php
 
+                                if (isset($_GET['idAsc'])){
+                                    $sql = "
+                                        SELECT u.id, u.idnumber
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.idnumber ASC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var idSort = document.getElementById('idSort');
+
+                                            // Change the href attribute
+                                            idSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?idDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['idDesc'])){
+                                    $sql = "
+                                        SELECT u.id, u.idnumber
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.idnumber DESC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var idSort = document.getElementById('idSort');
+
+                                            // Change the href attribute
+                                            idSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?idAsc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['nameAsc'])){
+                                    $sql = "
+                                        SELECT u.id
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.firstname ASC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var nameSort = document.getElementById('nameSort');
+
+                                            // Change the href attribute
+                                            nameSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?nameDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['nameDesc'])){
+                                    $sql = "
+                                        SELECT u.id
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.firstname DESC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var nameSort = document.getElementById('nameSort');
+
+                                            // Change the href attribute
+                                            nameSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?nameAsc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['emailAsc'])){
+                                    $sql = "
+                                        SELECT u.id
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.email ASC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var emailSort = document.getElementById('emailSort');
+
+                                            // Change the href attribute
+                                            emailSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?emailDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['emailDesc'])){
+                                    $sql = "
+                                        SELECT u.id
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        WHERE e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.email DESC
+                                    ";
+
+                                    $params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+
+                                    echo "
+                                        <script>
+                                            var emailSort = document.getElementById('emailSort');
+
+                                            // Change the href attribute
+                                            emailSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?emailAsc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['homeSearch'])){
+                                    $searchKey = $_GET['homeSearch'];
+
+                                    $sql = "
+                                        SELECT u.id
+                                        FROM {user} u
+                                        JOIN {user_enrolments} ue ON u.id = ue.userid
+                                        JOIN {enrol} e ON ue.enrolid = e.id
+                                        JOIN {role_assignments} ra ON u.id = ra.userid
+                                        JOIN {course} c ON e.courseid = c.id
+                                        WHERE (
+                                            u.idnumber LIKE ? OR
+                                            u.firstname LIKE ? OR
+                                            u.lastname LIKE ? OR
+                                            u.email LIKE ? OR
+                                            c.fullname LIKE ?
+                                        )
+                                        AND e.courseid IN ($course_id_placeholders)
+                                        AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+                                        AND u.id <> ?
+                                        ORDER BY u.email DESC
+                                    ";
+
+                                    $params = array();
+
+                                    // Create search patterns
+                                    $searchPattern = '%' . $searchKey . '%';
+
+                                    // Add search patterns to parameters array
+                                    for ($i = 0; $i < 5; $i++) {
+                                        $params[] = $searchPattern;
+                                    }
+
+                                    // Append course IDs and user ID to the parameters array
+                                    $params = array_merge($params, $course_ids, [$user_id]);
+
+                                    $all_students = $DB->get_records_sql($sql, $params);
+                                }
+                                
                                 foreach ($all_students as $student) {
 
                                     // ====== SELECT USER INFO

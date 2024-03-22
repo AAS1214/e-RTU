@@ -243,6 +243,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
 
     $params = array('quiz_id' => $quiz_id);
     $quiz_time_close = $DB->get_fieldset_sql($sql, $params);
+
     $date_quiz_created = date('j-M g:i A', $quiz_time_close[0]);
     $current_time = date('j-M g:i A');
 
@@ -250,6 +251,10 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
         $quiz_status = "In progress";
     } else {
         $quiz_status = "Complete";
+    }
+
+    if ($quiz_time_close[0] == 0){
+        $quiz_status = "In progress";
     }
 
     //echo $current_time;
@@ -420,7 +425,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
 
     <div class="bg-white p-4 items-center justify-between block sm:flex md:divide-x md:divide-gray-100 ">
         <div class="flex items-center mb-4 sm:mb-0">
-            <form action="#" method="GET" class=" lg:pl-3">
+            <form action="<?php echo  $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1'; ?>" method="GET" class=" lg:pl-3">
                 <label for="topbar-search" class="sr-only">Search</label>
                 <div class="relative mt-1 lg:w-72">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 px-2 py-2 pointer-events-none">
@@ -428,7 +433,11 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
-                    <input type="text" name="text" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
+                    <input type = "hidden" name = "course_id" value = "<?php echo $course_id; ?>">
+                    <input type = "hidden" name = "quiz_id" value = "<?php echo $quiz_id; ?>">
+                    <input type = "hidden" name = "quiz_name" value = "<?php echo $quiz_name; ?>">
+                    <input type = "hidden" name = "quiz_results" value = "1">
+                    <input type="text" id="myInput" onkeyup="myFunction()" name="searchKey" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 px-4 py-2  text-white " placeholder="Search">
                 </div>
             </form>
         </div>
@@ -444,11 +453,11 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
             <div class="overflow-x-auto rounded-lg">
                 <div class="inline-block min-w-full align-middle">
                     <div class="overflow-hidden shadow sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200 ">
+                        <table id="myTable" class="min-w-full divide-y divide-gray-200 ">
                             <thead class="bg-gray-100 ">
                                 <tr>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button id = "sortByNameBtn" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Name
                                                 <span class="ml-2">
@@ -463,7 +472,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button id = "sortByEmailBtn" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Email
                                                 <span class="ml-2">
@@ -478,7 +487,7 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <button id = "sortByStartedBtn" class="hover:text-[#FFD66E]">
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Started at
                                                 <span class="ml-2">
@@ -493,22 +502,24 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
-                                                Submitted at
-                                                <span class="ml-2">
+                                        <a id = "submittedSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&submittedAsc=1'; ?>"
+                                            <button class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
+                                                    Submitted at
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </a>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
+                                        <a id = "durationSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&durationAsc=1'; ?>"
                                             <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
                                                 Duration
                                                 <span class="ml-2">
@@ -523,26 +534,31 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                         </button>
                                     </th>
                                     <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
-                                        <button onclick="window.location.href='https:#';" class="hover:text-[#FFD66E]">
-                                            <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
-                                                Trust Score
-                                                <span class="ml-2">
+                                        <a id = "trustSort" href="<?php echo $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&trustAsc=1'; ?>"
+                                            <button class="hover:text-[#FFD66E]">
+                                                <div class="flex items-center uppercase text-xs font-medium tracking-wider ">
+                                                    Trust Score
+                                                    <span class="ml-2">
 
-                                                    <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
-                                                        <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
-                                                    </svg>
+                                                        <svg width=" 25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                            <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                        </svg>
 
-                                                </span>
-                                            </div>
-                                        </button>
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </a>
+                                    </th>
+                                    <th scope="col" class="p-4 text-sm font-bold tracking-wider text-left text-gray-700">
+                                        
                                     </th>
 
                                 </tr>
                             </thead>
                             <tbody class="bg-white ">
                                 <?php
-                                // SORTING FUNCTION SAMPLE
+                                // // SORTING FUNCTION SAMPLE
                                 // function compareAttempts($attempt1, $attempt2) {
                                 //     // Calculate duration of attempts
                                 //     $duration1 = $attempt1->timefinish - $attempt1->timestart;
@@ -557,6 +573,179 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
 
                                 // // Sort the array of attempts using the custom sorting function
                                 // usort($all_quiz_attempts, 'compareAttempts');
+
+                                function compareAttemptsAsc($a, $b) {
+                                    if ($a->timefinish == $b->timefinish) {
+                                        return 0;
+                                    }
+                                    return ($a->timefinish < $b->timefinish) ? -1 : 1;
+                                }
+                                
+                                // Define a custom comparison function to compare the timefinish field of two attempts for descending order
+                                function compareAttemptsDesc($a, $b) {
+                                    if ($a->timefinish == $b->timefinish) {
+                                        return 0;
+                                    }
+                                    return ($a->timefinish > $b->timefinish) ? -1 : 1;
+                                }
+
+                                function compareAttemptsDurationAsc($attempt1, $attempt2) {
+                                    // Calculate duration of attempts
+                                    $duration1 = $attempt1->timefinish - $attempt1->timestart;
+                                    $duration2 = $attempt2->timefinish - $attempt2->timestart;
+                                
+                                    // Compare durations for ascending order
+                                    if ($duration1 == $duration2) {
+                                        return 0;
+                                    }
+                                    return ($duration1 < $duration2) ? -1 : 1;
+                                }
+                                
+                                function compareAttemptsDurationDesc($attempt1, $attempt2) {
+                                    // Calculate duration of attempts
+                                    $duration1 = $attempt1->timefinish - $attempt1->timestart;
+                                    $duration2 = $attempt2->timefinish - $attempt2->timestart;
+                                
+                                    // Compare durations for descending order
+                                    if ($duration1 == $duration2) {
+                                        return 0;
+                                    }
+                                    return ($duration1 > $duration2) ? -1 : 1;
+                                }
+
+                                function compareAttemptsTrustScoreAsc($attempt1, $attempt2) {
+                                    global $DB;
+                                
+                                    // Get trust score for attempt 1
+                                    $sql1 = "SELECT trust_score
+                                             FROM {auto_proctor_trust_score_tb}
+                                             WHERE userid = :user_id1
+                                             AND quizid = :quiz_id1
+                                             AND attempt = :quiz_attempt1";
+                                    $params1 = array('user_id1' => $attempt1->userid, 'quiz_id1' => $attempt1->quiz, 'quiz_attempt1' => $attempt1->attempt);
+                                    $trust_score1 = $DB->get_field_sql($sql1, $params1);
+                                
+                                    // Get trust score for attempt 2
+                                    $sql2 = "SELECT trust_score
+                                             FROM {auto_proctor_trust_score_tb}
+                                             WHERE userid = :user_id2
+                                             AND quizid = :quiz_id2
+                                             AND attempt = :quiz_attempt2";
+                                    $params2 = array('user_id2' => $attempt2->userid, 'quiz_id2' => $attempt2->quiz, 'quiz_attempt2' => $attempt2->attempt);
+                                    $trust_score2 = $DB->get_field_sql($sql2, $params2);
+                                
+                                    // Compare trust scores for ascending order
+                                    if ($trust_score1 == $trust_score2) {
+                                        return 0;
+                                    }
+                                    return ($trust_score1 < $trust_score2) ? -1 : 1;
+                                }
+                                
+                                function compareAttemptsTrustScoreDesc($attempt1, $attempt2) {
+                                    global $DB;
+
+                                    // Get trust score for attempt 1
+                                    $sql1 = "SELECT trust_score
+                                            FROM {auto_proctor_trust_score_tb}
+                                            WHERE userid = :user_id1
+                                            AND quizid = :quiz_id1
+                                            AND attempt = :quiz_attempt1";
+                                    $params1 = array('user_id1' => $attempt1->userid, 'quiz_id1' => $attempt1->quiz, 'quiz_attempt1' => $attempt1->attempt);
+                                    $trust_score1 = $DB->get_field_sql($sql1, $params1);
+
+                                    // Get trust score for attempt 2
+                                    $sql2 = "SELECT trust_score
+                                            FROM {auto_proctor_trust_score_tb}
+                                            WHERE userid = :user_id2
+                                            AND quizid = :quiz_id2
+                                            AND attempt = :quiz_attempt2";
+                                    $params2 = array('user_id2' => $attempt2->userid, 'quiz_id2' => $attempt2->quiz, 'quiz_attempt2' => $attempt2->attempt);
+                                    $trust_score2 = $DB->get_field_sql($sql2, $params2);
+
+                                    // Compare trust scores for descending order
+                                    if ($trust_score1 == $trust_score2) {
+                                        return 0;
+                                    }
+                                    return ($trust_score1 > $trust_score2) ? -1 : 1;
+                                }
+                                
+                                if (isset($_GET['submittedAsc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsAsc');
+
+                                    echo "
+                                        <script>
+                                            var submittedSort = document.getElementById('submittedSort');
+                                            
+                                            // Change the href attribute
+                                            submittedSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&submittedDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['submittedDesc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsDesc');
+
+                                    echo "
+                                        <script>
+                                            var submittedSort = document.getElementById('submittedSort');
+                                            
+                                            // Change the href attribute
+                                            submittedSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&submittedAsc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['durationAsc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsDurationAsc');
+
+                                    echo "
+                                        <script>
+                                            var durationSort = document.getElementById('durationSort');
+                                            
+                                            // Change the href attribute
+                                            durationSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&durationDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['durationDesc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsDurationDesc');
+
+                                    echo "
+                                        <script>
+                                            var durationSort = document.getElementById('durationSort');
+                                            
+                                            // Change the href attribute
+                                            durationSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&durationAsc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['trustAsc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsTrustScoreAsc');
+
+                                    echo "
+                                        <script>
+                                            var trustSort = document.getElementById('trustSort');
+                                            
+                                            // Change the href attribute
+                                            trustSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&trustDesc=1'."');
+                                        </script>
+                                    ";
+                                }
+
+                                if (isset($_GET['trustDesc'])){
+                                    usort($all_quiz_attempts, 'compareAttemptsTrustScoreDesc');
+
+                                    echo "
+                                        <script>
+                                            var trustSort = document.getElementById('trustSort');
+                                            
+                                            // Change the href attribute
+                                            trustSort.setAttribute('href', '". $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id . '&quiz_id=' . $quiz_id . '&quiz_name='. $quiz_name .'&quiz_results=1' . '&trustAsc=1'."');
+                                        </script>
+                                    ";
+                                }
 
                                 foreach ($all_quiz_attempts as $attempt) {
                                     $userid = $attempt->userid;
@@ -605,6 +794,16 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                     }
                                     //echo "Duration: $duration";
 
+                                         // SELECTING TRUST SCORE
+                                            $sql = "SELECT trust_score
+                                                FROM {auto_proctor_trust_score_tb}
+                                                WHERE userid = :user_id
+                                                AND quizid = :quiz_id
+                                                AND attempt = :quiz_attempt;
+                                            ";
+                                            $params = array('user_id' => $attempt->userid, 'quiz_id' => $attempt->quiz, 'quiz_attempt' => $attempt->attempt);
+                                            $trust_score = $DB->get_fieldset_sql($sql, $params);
+
                                     echo '
                                             <tr>
                                             <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap ">
@@ -621,6 +820,9 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
                                             </td>
                                             <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
                                                 ' . $duration . '
+                                            </td>
+                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                ' . $trust_score[0] . '%
                                             </td>
                                             <td class="p-4 whitespace-nowrap">
                                             <a href="' . $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id=' . $course_id . '&user_id=' . $userid . '&quiz_id=' . $attempt->quiz . '&quiz_attempt=' . $attempt->attempt . '" class="text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5">View Report</a>
@@ -684,114 +886,163 @@ if (isset($_GET['course_id']) && isset($_GET['quiz_id'])) {
     </div>
 </main>
 <script>
-    // document.addEventListener("DOMContentLoaded", function() {
-    //     // Select the element with the id 'exportThis'
-    //     var exportButton = document.getElementById('exportThis');
-
-    //     // Add click event listener
-    //     exportButton.addEventListener('click', function(event) {
-    //         // Prevent the default action of the button (i.e., submitting a form)
-    //         event.preventDefault();
-
-    //         // Retrieve the quizid from the data attribute
-    //         var quizId = exportButton.getAttribute('data-quizid');
-
-    //         // Send the quizid to a PHP script via AJAX
-    //         var xhr = new XMLHttpRequest();
-    //         xhr.open('POST', 'functions/export_functions.php', true);
-    //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    //         xhr.onreadystatechange = function() {
-    //             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-    //                 console.log('Quiz report saved successfully');
-    //                 // Reload the page after the report is saved
-    //                 //location.reload();
-    //             }
-    //         };
-    //         xhr.send('quiz_id=' + quizId);
-
-    //         // Disable the button to prevent multiple clicks while processing
-    //         exportButton.disabled = true;
-    //     });
-    // });
-
-    // document.addEventListener("DOMContentLoaded", function() {
-    //     // Select the element with the id 'exportThis'
-    //     var exportButton = document.getElementById('exportThis');
-
-    //     // Add click event listener
-    //     exportButton.addEventListener('click', function(event) {
-    //         // Prevent the default action of the button (i.e., submitting a form)
-    //         event.preventDefault();
-
-    //         // Retrieve the quizid from the data attribute
-    //         var quizId = exportButton.getAttribute('data-quizid');
-    //         var quiz_name = exportButton.getAttribute('data-quizname');
-
-    //         // Send the quizid to a PHP script via AJAX
-    //         var xhr = new XMLHttpRequest();
-    //         xhr.open('POST', 'functions/export_functions.php', true);
-    //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    //         xhr.onreadystatechange = function() {
-    //             if (xhr.readyState === XMLHttpRequest.DONE) {
-    //                 if (xhr.status === 200) {
-    //                     console.log('Quiz report saved successfully');
-    //                     // Initiate the download only when the response is received
-    //                     var blob = new Blob([xhr.response], { type: 'text/csv' });
-    //                     var link = document.createElement('a');
-    //                     link.href = window.URL.createObjectURL(blob);
-    //                     link.download = 'quiz_id_' + quizId + '_' + quiz_name + '_reports.csv';
-    //                     link.click();
-    //                 } else {
-    //                     console.error('Failed to save quiz report');
-    //                 }
-    //             }
-    //         };
-    //         xhr.send('quiz_id=' + quizId + '&quiz_name=' + quiz_name);
-
-    //         // Disable the button to prevent multiple clicks while processing
-    //         exportButton.disabled = true;
-    //     });
-    // });
-
     document.addEventListener("DOMContentLoaded", function() {
-    // Select the element with the id 'exportThis'
-    var exportButton = document.getElementById('exportThis');
+        // Select the element with the id 'exportThis'
+        var exportButton = document.getElementById('exportThis');
 
-    // Add click event listener
-    exportButton.addEventListener('click', function(event) {
-        // Prevent the default action of the button (i.e., submitting a form)
-        event.preventDefault();
+        // Add click event listener
+        exportButton.addEventListener('click', function(event) {
+            // Prevent the default action of the button (i.e., submitting a form)
+            event.preventDefault();
 
-        // Retrieve the quizid and quizname from the data attributes
-        var quizId = exportButton.getAttribute('data-quizid');
-        var quizName = exportButton.getAttribute('data-quizname');
+            // Retrieve the quizid and quizname from the data attributes
+            var quizId = exportButton.getAttribute('data-quizid');
+            var quizName = exportButton.getAttribute('data-quizname');
 
-        // Send the quizid and quizname to a PHP script via AJAX
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'functions/export_functions.php', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.responseType = 'blob'; // Set response type to blob
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    console.log('Files saved successfully');
+            // Send the quizid and quizname to a PHP script via AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'functions/export_functions.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.responseType = 'blob'; // Set response type to blob
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log('Files saved successfully');
 
-                    // Initiate the download only when the response is received
-                    var blob = new Blob([xhr.response], { type: 'application/zip' });
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = 'QUIZ_ID_' + quizId + '_' + quizName + '_reports.zip'; // Set zip file name
-                    link.click();
-                } else {
-                    console.error('Failed to save files');
+                        // Initiate the download only when the response is received
+                        var blob = new Blob([xhr.response], { type: 'application/zip' });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'QUIZ_ID_' + quizId + '_' + quizName + '_reports.zip'; // Set zip file name
+                        link.click();
+                    } else {
+                        console.error('Failed to save files');
+                    }
                 }
-            }
-        };
-        xhr.send('quiz_id=' + quizId + '&quiz_name=' + quizName);
+            };
+            xhr.send('quiz_id=' + quizId + '&quiz_name=' + quizName);
 
+        });
     });
-});
 
+
+
+    var ascending = true; // Initialize sorting direction as ascending
+    var emailAscending = true;
+    var startedAscending = true;
+    var submittedAscending = true;
+
+    function sortTableByName() {
+        console.log("Sorting table by name...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var nameA = a.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            var nameB = b.querySelector('.p-4.text-sm.font-semibold').innerText.trim().toLowerCase();
+            
+            // Toggle sorting direction
+            var comparison = ascending ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        ascending = !ascending; // Toggle sorting direction
+    }
+
+    function sortTableByEmail() {
+        console.log("Sorting table by email...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var emailA = a.querySelector('.p-4.text-sm.font-normal').innerText.trim().toLowerCase();
+            var emailB = b.querySelector('.p-4.text-sm.font-normal').innerText.trim().toLowerCase();
+            
+            // Toggle sorting direction for email
+            var comparison = emailAscending ? emailA.localeCompare(emailB) : emailB.localeCompare(emailA);
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        emailAscending = !emailAscending; // Toggle sorting direction for email
+    }
+
+    function sortTableByStarted() {
+        console.log("Sorting table by started at...");
+        var table = document.querySelector('.min-w-full');
+        var tbody = table.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        rows.sort(function(a, b) {
+            var startedA = new Date(a.querySelector('.p-4.text-sm.font-semibold').innerText.trim());
+            var startedB = new Date(b.querySelector('.p-4.text-sm.font-semibold').innerText.trim());
+            
+            // Toggle sorting direction for started at
+            var comparison = startedAscending ? startedA - startedB : startedB - startedA;
+            return comparison;
+        });
+        
+        // Reorder table rows in the sorted order
+        rows.forEach(function(row) {
+            tbody.appendChild(row);
+        });
+
+        startedAscending = !startedAscending; // Toggle sorting direction for started at
+    }
+    
+
+    // Event listener to trigger sorting function when Name button is clicked
+    document.getElementById("sortByNameBtn").addEventListener("click", function () {
+        console.log("Name button clicked...");
+        sortTableByName();
+    });
+
+    // Event listener to trigger sorting function when Email button is clicked
+    document.getElementById("sortByEmailBtn").addEventListener("click", function () {
+        console.log("Email button clicked...");
+        sortTableByEmail();
+    });
+
+    document.getElementById("sortByStartedBtn").addEventListener("click", function () {
+        console.log("Started at button clicked...");
+        sortTableByStarted();
+    });
+
+    function myFunction() {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            // Loop through all td elements in the row
+            var found = false;
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+            txtValue = td[j].textContent || td[j].innerText; // Get the text content of the td
+            if (txtValue.toUpperCase().indexOf(filter) > -1) { // Perform case-insensitive search
+                found = true;
+                break;
+            }
+            }
+            if (found) {
+            tr[i].style.display = ""; // Display the row if the search query is found in any column
+            } else {
+            tr[i].style.display = "none"; // Hide the row if the search query is not found in any column
+            }
+        }
+    }
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>

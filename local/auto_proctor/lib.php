@@ -507,7 +507,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
             //     echo "================================================================";
             //     echo "</br>";
             //     echo "</br>";
-            //     $violation_points = 0;
+            $violation_points = 0;
         }
 }
 

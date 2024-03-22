@@ -349,4 +349,70 @@ $(document).ready(function () {
         e.preventDefault();
         return false;
     }
+
+    // PREVENT SCREENSHOT
+        var styleTag = document.createElement('style');
+        styleTag.id = 'styles';
+        document.head.appendChild(styleTag);
+
+        // Add CSS rules to the style tag
+        document.getElementById('styles').textContent = `
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: black; /* Semi-transparent background */
+                z-index: 9999;
+                display: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #warning {
+                color: white;
+                font-size: 24px;
+                text-align: center;
+                z-index: 10000;
+                margin-bottom: 20px; /* Add some spacing between warning and button */
+            }
+        `;
+
+        // Function to show the overlay
+        function showOverlay() {
+            var overlay = document.createElement('div');
+            overlay.id = 'overlay';
+            overlay.addEventListener('click', hideOverlay); // Add click event listener to remove overlay
+            var warning = document.createElement('div');
+            warning.id = 'warning';
+            warning.textContent = "Warning: Don't take a screenshot!";
+
+            overlay.appendChild(warning);
+            document.body.appendChild(overlay);
+
+            overlay.style.display = 'flex';
+        }
+
+        // Function to hide the overlay
+        function hideOverlay() {
+            var overlay = document.getElementById('overlay');
+            overlay.style.display = 'none';
+            overlay.remove();
+        }
+
+        // Event listener to trigger the overlay when a screenshot is taken
+        document.addEventListener('keyup', function (event) {
+            if (event.key === 'PrintScreen' || 
+                (event.ctrlKey && event.altKey && event.key === 'PrintScreen') ||
+                (event.key === 'Shift' && event.key === 'S' && event.getModifierState("Meta") && event.getModifierState("Shift"))) {
+                showOverlay();
+            }
+        });
 });
