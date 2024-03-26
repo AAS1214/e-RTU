@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/auto_proctor/db" VERSION="20231212" COMMENT="XMLDB file for local auto_proctor plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <!-- TABLE FOR AUTO-PROCTOR QUIZZES  -->
+        <TABLE NAME="auto_proctor_quiz_tb" COMMENT="each record is fetched from the quiz table">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_tab_switching" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="monitor_camera" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="monitor_microphone" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="strict_mode" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_quiz_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR ACTIVITY REPORT -->
+        <TABLE NAME="auto_proctor_activity_report_tb" COMMENT="captured activities">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="activity_type" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="evidence" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="timestamp" TYPE="text" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_activity_report_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_activity_report_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_activity_report_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR PROCTORING SESSION -->
+        <TABLE NAME="auto_proctor_proctoring_session_tb" COMMENT="proctoring session log">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="camera_device_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_setup" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="device_type" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="prompted_of_modal_setup" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_proctoring_session_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_proctoring_session_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_proctoring_session_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR STORING VIDEO SESSION -->
+        <TABLE NAME="auto_proctor_session_camera_recording" COMMENT="proctoring session log">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="camera_recording" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_session_camera_recording_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_session_camera_recording_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_session_camera_recording_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR STORING VIDEO SESSION -->
+        <TABLE NAME="auto_proctor_trust_score_tb" COMMENT="proctoring session log">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="trust_score" TYPE="float" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_trust_score_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_trust_score_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_trust_score_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+  </TABLES>
+</XMLDB>
